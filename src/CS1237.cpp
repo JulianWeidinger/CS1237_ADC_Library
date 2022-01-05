@@ -8,7 +8,7 @@
  * This is a library for the CS1237 24bit Amplifier for loadcells
  *
  * The Chip communicates through a 2-wire SPI interface SCLK, DRDY/DOUT, 
- * 2 GPIO-pins are required to interface with the CS1237-IC.
+ * 2 GPIO-pins are required to interface with the CS1237-IC. asd
  *
  * @section author Author
  *
