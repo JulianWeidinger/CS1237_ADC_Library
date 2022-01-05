@@ -172,5 +172,4 @@ void CS1237::read(int32_t *value){
 void CS1237::sleep(void){
     digitalWrite(_sck, HIGH);
     _sleep = true;
-    
 }
