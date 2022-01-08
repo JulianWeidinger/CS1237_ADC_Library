@@ -8,7 +8,7 @@
  * This is a library for the CS1237 24bit Amplifier for loadcells
  *
  * The Chip communicates through a 2-wire SPI interface SCLK, DRDY/DOUT, 
- * 2 GPIO-pins are required to interface with the CS1237-IC. asd
+ * 2 GPIO-pins are required to interface with the CS1237-IC.
  *
  * @section author Author
  *
@@ -21,17 +21,19 @@
 
 #include "CS1237.h"
 
-#define WAITING_TIME_AFTER_READ     27 //[us] the time to wait for the chip to be ready for a new reading, in the datasheet its said 27us
+#define WAITING_TIME_AFTER_READ     27  //[us] the time to wait for the chip to be ready for a new reading, in the datasheet its said 27us
 #define WAITING_TIME_AFTER_POWERON  2   //[ms] the time to wait for the chip to be ready after POWERON, or a changed configuration, in the datasheet its said 2ms
 #define WAITING_TIME_AFTER_SLEEP    10  //[us] the time to wait for the chip to be ready after sleep, in the datasheet its said 10us
 #define WAITING_TIME_TO_SLEEP       100 //[us] the time to the chip needs to go to sleep, in the datasheet its said 100us
+
+#define NO_READING_ALLOWED_TIME     100 //[us] the time when no reading is allowed this is 100us before a new reading is predicted, this depends on the configured sample rate of the ADC
 
 CS1237::CS1237(uint8_t count, uint8_t sck, uint8_t *dout){
     _count = count;
     _dout = dout;
     _sck = sck;
 
-    _last_meassure_time = (uint64_t *) malloc(_count*sizeof(uint64_t)); //specify the needed location
+    _time_old_measurement = (uint64_t *) malloc(_count*sizeof(uint64_t)); //specify the needed location
 
     pinMode(_sck, OUTPUT);
     digitalWrite(_sck, LOW);
@@ -173,3 +175,21 @@ void CS1237::sleep(void){
     digitalWrite(_sck, HIGH);
     _sleep = true;
 }
+
+
+
+
+
+
+void CS1237::instanceISR(void) { 
+    _ISR_count++; 
+} 
+
+void CS1237::globalISR0(void) { CS1237::instance[0]->instanceISR(); }
+void CS1237::globalISR1(void) { CS1237::instance[1]->instanceISR(); }
+void CS1237::globalISR2(void) { CS1237::instance[2]->instanceISR(); }
+void CS1237::globalISR3(void) { CS1237::instance[3]->instanceISR(); }
+void CS1237::globalISR4(void) { CS1237::instance[4]->instanceISR(); }
+void CS1237::globalISR5(void) { CS1237::instance[5]->instanceISR(); }
+void CS1237::globalISR6(void) { CS1237::instance[6]->instanceISR(); }
+void CS1237::globalISR7(void) { CS1237::instance[7]->instanceISR(); }
