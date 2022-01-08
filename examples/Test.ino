@@ -1,8 +1,8 @@
 
 #include <CS1237.h>
 
-#define SCK_1 25
-#define SCK_2 12
+#define SCK_1 12
+#define SCK_2 15
 #define DOUT_1 32
 #define DOUT_2 33
 
