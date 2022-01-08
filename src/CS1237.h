@@ -15,9 +15,14 @@
 #ifndef CS1237_h
 #define CS1237_h
 
+
 // command to read or write the configuration
 #define READ_ADC_CONFIG 0x56
 #define WRITE_ADC_CONFIG 0x65
+
+//
+#define MAX_ADCS 8
+#define TIMER_PRESCALER 80 // 12.5ns*80 = 1000ns
 
 // configuration commands
 #define SPEED_10 0b00000000
@@ -41,18 +46,29 @@
 class CS1237
 {
 private:
-    //! @param _count private variable of the count of the ADC conected to one SCK-line
-    uint8_t _count;
-    //! @param _dout private variable of the dout-pin of the first ADC
-    uint8_t *_dout;
+    //variables for ADC configuration
     //! @param _sck private variable of the clock-pin
     uint8_t _sck;
-    //! @param _last_meassure_time private variabel of the time of the last ADC measurement
-    uint64_t *_last_meassure_time;
+    //! @param _dout private variable of the dout-pin of the first ADC
+    uint8_t _dout;
     //! @param sleep private variabel of the sleep state of the chip
-    uint8_t _sleep = true;
-    //! 
+    uint8_t _sleep;
 
+    //variables for the object definition
+    //! @param _object_number private variable to identify the object and the dedicated interrupt functions
+    uint8_t _object_number;
+
+    //variables for the data transfer process and interrupts //https://arduinoplusplus.wordpress.com/2021/02/05/interrupts-and-c-class-instances/
+    //! @param _time_old_measurement private variabel of the time of the last ADC measurement
+    uint32_t _time_old_measurement;
+    //! @param _block_value private variable to know, when a data_transfer is running
+    volatile bool _block_value;
+    //! @param _clock_count private variable to count the clocks, which ara send to the ADC
+    volatile uint8_t _clock_count;
+    //! @param _vlaue private variable for the measured value of the analog signal
+    uint32_t _value;
+    //! @param _interrupt_reading private flag to know, if there is an interrupt reading in process or not
+    bool _interrupt_reading = false;
 public:
     /*!
      * @brief test to establish a connection to the CS1237
@@ -61,18 +77,49 @@ public:
      * @return Returns true if the gain was set successfully and the chip is ready
      */
 
-
     //! @param last_meassure_time private variabel of the last ADC measurement
+
+
     
 
 
-    CS1237(uint8_t count, uint8_t sck, uint8_t *dout);
-    void send_clk_pulses(byte count);
-    void raw_configure(bool write, byte *register_value, int32_t *result = NULL, byte gain = PGA_128, byte speed = SPEED_1280, byte channel = CHANNEL_A);
-    bool configure(int32_t *result = NULL, byte gain = PGA_128, byte speed = SPEED_1280, byte channel = CHANNEL_A);
-    bool ready(void);
-    void read(int32_t *result = NULL);
-    void sleep(void);
-};
 
-#endif // CS1237_h
+
+    CS1237(uint8_t sck, uint8_t dout);
+    ~CS1237();
+    int32_t reading();
+    void send_clk_pulses(byte count);
+    byte raw_configure(bool write, int32_t *result = NULL, byte gain = PGA_128, byte speed = SPEED_1280, byte channel = CHANNEL_A);
+    bool configure(int32_t *result, byte gain = PGA_128, byte speed = SPEED_1280, byte channel = CHANNEL_A);
+    int32_t read_without_interrupt(void);
+    void start_reading(void);
+    void end_reading(void);
+    void sleep(bool sleep_ = true);
+    
+    void instanceISR(void); // Instance ISR handler called from static ISR globalISRx
+    void instance_timer_ISR(void);
+    void IRAM_ATTR timer_init(void);
+    void IRAM_ATTR timer_stop(void);
+
+    static void IRAM_ATTR timer_ISR0(void);
+    static void IRAM_ATTR timer_ISR1(void);
+    static void IRAM_ATTR timer_ISR2(void);
+    static void IRAM_ATTR timer_ISR3(void);
+    static void IRAM_ATTR timer_ISR4(void);
+    static void IRAM_ATTR timer_ISR5(void);
+    static void IRAM_ATTR timer_ISR6(void);
+    static void IRAM_ATTR timer_ISR7(void);
+
+    static void IRAM_ATTR ISR0(void);
+    static void IRAM_ATTR ISR1(void);
+    static void IRAM_ATTR ISR2(void);
+    static void IRAM_ATTR ISR3(void);
+    static void IRAM_ATTR ISR4(void);
+    static void IRAM_ATTR ISR5(void);
+    static void IRAM_ATTR ISR6(void);
+    static void IRAM_ATTR ISR7(void);
+};
+    //use global variables because static doesn't work
+    
+    
+#endif  //CS1237
