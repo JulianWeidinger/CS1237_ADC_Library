@@ -2,36 +2,6 @@
     "version": 4,
     "configurations": [
         {
-            "name": "Win32",
-            "compilerPath": "C:/Program Files (x86)/Arduino/hardware/tools/avr/bin/avr-gcc.exe",
-            "compilerArgs": [],
-            "intelliSenseMode": "clang-x64",
-            "includePath": [
-                "${workspaceFolder}/**",
-                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/cores/arduino",
-                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries/EEPROM/src",
-                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries/HID/src",
-                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries/SoftwareSerial/src",
-                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries/SPI/src",
-                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries/Wire/src",
-                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/libraries/SPI/src",
-                "C:/Program Files (x86)/Arduino/hardware/arduino/avr/variants/ethernet"
-            ],
-            "forcedInclude": [],
-            "cStandard": "c11",
-            "cppStandard": "c++17",
-            "defines": [
-                "_DEBUG",
-                "UNICODE",
-                "_UNICODE",
-                "F_CPU=16000000L",
-                "ARDUINO=10805",
-                "ARDUINO_AVR_UNO",
-                "ARDUINO_ARCH_AVR",
-                "USBCON"
-            ]
-        },
-        {
             "name": "Arduino",
             "compilerPath": "C:\\Users\\juliw\\AppData\\Local\\Arduino15\\packages\\esp32\\tools\\xtensa-esp32-elf-gcc\\1.22.0-97-gc752ad5-5.2.0\\bin\\xtensa-esp32-elf-g++",
             "compilerArgs": [
