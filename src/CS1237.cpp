@@ -30,12 +30,13 @@
 
 #ifndef CS1237_global
 #define CS1237_global
-void (*CS1237_ISRfunc[MAX_ADCS])(void) = {CS1237::ISR0, CS1237::ISR1, CS1237::ISR2, CS1237::ISR3, CS1237::ISR4, CS1237::ISR5, CS1237::ISR6, CS1237::ISR7};
-void (*CS1237_timer_ISRfunc[MAX_ADCS])(void) = {CS1237::timer_ISR0, CS1237::timer_ISR1, CS1237::timer_ISR2, CS1237::timer_ISR3, CS1237::timer_ISR4, CS1237::timer_ISR5, CS1237::timer_ISR6, CS1237::timer_ISR7};
-bool CS1237_ISRUsed[MAX_ADCS] = {false, false, false, false, false, false, false, false};
+void (*CS1237_ISRfunc[MAX_ADCS])(void) = {CS1237::ISR0, CS1237::ISR1};
+void (*CS1237_timer_ISRfunc[MAX_ADCS])(void) = {CS1237::timer_ISR0, CS1237::timer_ISR1};
+bool CS1237_ISRUsed[MAX_ADCS] = {false, false};
 CS1237 *CS1237_instance[MAX_ADCS];
-hw_timer_t *CS1237_timer = NULL;
+hw_timer_t *CS1237_timer[MAX_ADCS];
 portMUX_TYPE timerMux = portMUX_INITIALIZER_UNLOCKED;
+volatile bool block_timer[MAX_ADCS] = {false, false};
 #endif
 
 CS1237::CS1237(uint8_t sck, uint8_t dout)
@@ -45,6 +46,7 @@ CS1237::CS1237(uint8_t sck, uint8_t dout)
     {
         if (!CS1237_ISRUsed[i])
         {
+            CS1237_ISRUsed[i] = true;
             _object_number = i;
             CS1237_instance[_object_number] = this;
             break;
@@ -80,6 +82,7 @@ start_sending_reading:
     // wait until the datatransmission is finished
     while (_block_value)
         ;
+
     noInterrupts();
     if ((_value > 0x7FFFFF) && !_block_value)
         return (_value - 0xFFFFFF);
@@ -132,7 +135,7 @@ byte CS1237::raw_configure(bool write, int32_t *value, byte gain, byte speed, by
     noInterrupts();
 
     send_clk_pulses(3);
-    
+
     // the ADC DOUT-Pin switches to input
     pinMode(_dout, OUTPUT);
     send_clk_pulses(2);
@@ -197,22 +200,29 @@ void CS1237::start_reading(void)
 {
     // wake the ADC up
     sleep(false);
-
-    // the new meausrement is ready
-    _time_old_measurement = micros();
-
-    // start the timer and read the first value
     detachInterrupt(digitalPinToInterrupt(_dout));
-    _clock_count = 0;
     _block_value = true;
-    _value = 0;
-    timer_init();
     _interrupt_reading = true;
+    _clock_count = 0;
+    for (uint8_t i = 0; i < MAX_ADCS; i++)
+    {
+        if (block_timer[i])
+        {
+            block_timer[_object_number] = true;
+            break;
+        }
+    }
+    if (!block_timer[_object_number])
+    {
+        block_timer[_object_number] = true;
+        _value = 0;
+        timer_init(_object_number);
+    }
 }
 
 void CS1237::end_reading(void)
 {
-    timer_stop();
+    timer_stop(_object_number);
     detachInterrupt(digitalPinToInterrupt(_dout));
     sleep();
     _interrupt_reading = false;
@@ -241,30 +251,41 @@ void CS1237::sleep(bool sleep_)
 void CS1237::instanceISR(void)
 {
     portENTER_CRITICAL_ISR(&timerMux);
-    _block_value = true;
-    _time_old_measurement = micros();
+
+    _block_value = true;    
     detachInterrupt(digitalPinToInterrupt(_dout));
     _clock_count = 0;
+    for (uint8_t i = 0; i < MAX_ADCS; i++)
+    {
+        if (block_timer[i])
+        {
+            block_timer[_object_number] = true;
+            break;
+        }
+    }
+    if (!block_timer[_object_number])
+    {
+        block_timer[_object_number] = true;
+        _value = 0;
+        timer_init(_object_number);
+    }
     
-    _value = 0;
-    timer_init();
-
     portEXIT_CRITICAL_ISR(&timerMux);
 }
 
-void IRAM_ATTR CS1237::timer_init(void)
+void IRAM_ATTR CS1237::timer_init(uint8_t object_number_)
 {
-    CS1237_timer = timerBegin(0, TIMER_PRESCALER, true);
-    timerAttachInterrupt(CS1237_timer, CS1237_timer_ISRfunc[_object_number], true);
-    timerAlarmWrite(CS1237_timer, 2, true);
-    timerAlarmEnable(CS1237_timer);
+    CS1237_timer[object_number_] = timerBegin(0, TIMER_PRESCALER, true);
+    timerAttachInterrupt(CS1237_timer[object_number_], CS1237_timer_ISRfunc[object_number_], true);
+    timerAlarmWrite(CS1237_timer[object_number_], 6, true);
+    timerAlarmEnable(CS1237_timer[object_number_]);
 }
 
-void IRAM_ATTR CS1237::timer_stop(void)
+void IRAM_ATTR CS1237::timer_stop(uint8_t object_number_)
 {
-    timerAlarmDisable(CS1237_timer);
-    timerDetachInterrupt(CS1237_timer);
-    timerEnd(CS1237_timer);
+    timerAlarmDisable(CS1237_timer[object_number_]);
+    timerDetachInterrupt(CS1237_timer[object_number_]);
+    timerEnd(CS1237_timer[object_number_]);
 }
 
 void IRAM_ATTR CS1237::instance_timer_ISR(void)
@@ -272,7 +293,7 @@ void IRAM_ATTR CS1237::instance_timer_ISR(void)
     portENTER_CRITICAL_ISR(&timerMux);
 
     if (_clock_count % 2) // only every time the _SCK is HIGH read the Dout-Pin
-        _value |= digitalRead(_dout) << (23 - int((_clock_count - 1) / 2));
+        _value |= digitalRead(_dout) << (23 - (_clock_count - 1) / 2);
 
     _clock_count++;
     digitalWrite(_sck, (_clock_count % 2));
@@ -281,8 +302,18 @@ void IRAM_ATTR CS1237::instance_timer_ISR(void)
     if (_clock_count >= 48)
     {
         _block_value = false;
+        block_timer[_object_number] = false;
         attachInterrupt(digitalPinToInterrupt(_dout), CS1237_ISRfunc[_object_number], FALLING);
-        timer_stop();
+        timer_stop(_object_number);
+        for (uint8_t i = 0; i < MAX_ADCS; i++)
+        {
+            if (block_timer[i])
+            {
+                CS1237_instance[i]->_value = 0;
+                timer_init(i);
+                break;
+            }
+        }
     }
 
     portEXIT_CRITICAL_ISR(&timerMux);
@@ -290,18 +321,6 @@ void IRAM_ATTR CS1237::instance_timer_ISR(void)
 
 void IRAM_ATTR CS1237::timer_ISR0(void) { CS1237_instance[0]->instance_timer_ISR(); }
 void IRAM_ATTR CS1237::timer_ISR1(void) { CS1237_instance[1]->instance_timer_ISR(); }
-void IRAM_ATTR CS1237::timer_ISR2(void) { CS1237_instance[2]->instance_timer_ISR(); }
-void IRAM_ATTR CS1237::timer_ISR3(void) { CS1237_instance[3]->instance_timer_ISR(); }
-void IRAM_ATTR CS1237::timer_ISR4(void) { CS1237_instance[4]->instance_timer_ISR(); }
-void IRAM_ATTR CS1237::timer_ISR5(void) { CS1237_instance[5]->instance_timer_ISR(); }
-void IRAM_ATTR CS1237::timer_ISR6(void) { CS1237_instance[6]->instance_timer_ISR(); }
-void IRAM_ATTR CS1237::timer_ISR7(void) { CS1237_instance[7]->instance_timer_ISR(); }
 
 void IRAM_ATTR CS1237::ISR0(void) { CS1237_instance[0]->instanceISR(); }
 void IRAM_ATTR CS1237::ISR1(void) { CS1237_instance[1]->instanceISR(); }
-void IRAM_ATTR CS1237::ISR2(void) { CS1237_instance[2]->instanceISR(); }
-void IRAM_ATTR CS1237::ISR3(void) { CS1237_instance[3]->instanceISR(); }
-void IRAM_ATTR CS1237::ISR4(void) { CS1237_instance[4]->instanceISR(); }
-void IRAM_ATTR CS1237::ISR5(void) { CS1237_instance[5]->instanceISR(); }
-void IRAM_ATTR CS1237::ISR6(void) { CS1237_instance[6]->instanceISR(); }
-void IRAM_ATTR CS1237::ISR7(void) { CS1237_instance[7]->instanceISR(); }
