@@ -21,7 +21,7 @@
 #define WRITE_ADC_CONFIG 0x65
 
 //
-#define MAX_ADCS 8
+#define MAX_ADCS 2
 #define TIMER_PRESCALER 80 // 12.5ns*80 = 1000ns
 
 // configuration commands
@@ -59,14 +59,12 @@ private:
     uint8_t _object_number;
 
     //variables for the data transfer process and interrupts //https://arduinoplusplus.wordpress.com/2021/02/05/interrupts-and-c-class-instances/
-    //! @param _time_old_measurement private variabel of the time of the last ADC measurement
-    uint32_t _time_old_measurement;
     //! @param _block_value private variable to know, when a data_transfer is running
     volatile bool _block_value;
     //! @param _clock_count private variable to count the clocks, which ara send to the ADC
     volatile uint8_t _clock_count;
     //! @param _vlaue private variable for the measured value of the analog signal
-    uint32_t _value;
+    volatile int32_t _value;
     //! @param _interrupt_reading private flag to know, if there is an interrupt reading in process or not
     bool _interrupt_reading = false;
 public:
@@ -76,9 +74,6 @@ public:
      * @param wire The I2C interface to use, defaults to Wire
      * @return Returns true if the gain was set successfully and the chip is ready
      */
-
-    //! @param last_meassure_time private variabel of the last ADC measurement
-
 
     
 
@@ -98,26 +93,14 @@ public:
     
     void instanceISR(void); // Instance ISR handler called from static ISR globalISRx
     void instance_timer_ISR(void);
-    void IRAM_ATTR timer_init(void);
-    void IRAM_ATTR timer_stop(void);
+    void IRAM_ATTR timer_init(uint8_t object_number_);
+    void IRAM_ATTR timer_stop(uint8_t object_number_);
 
     static void IRAM_ATTR timer_ISR0(void);
     static void IRAM_ATTR timer_ISR1(void);
-    static void IRAM_ATTR timer_ISR2(void);
-    static void IRAM_ATTR timer_ISR3(void);
-    static void IRAM_ATTR timer_ISR4(void);
-    static void IRAM_ATTR timer_ISR5(void);
-    static void IRAM_ATTR timer_ISR6(void);
-    static void IRAM_ATTR timer_ISR7(void);
 
     static void IRAM_ATTR ISR0(void);
     static void IRAM_ATTR ISR1(void);
-    static void IRAM_ATTR ISR2(void);
-    static void IRAM_ATTR ISR3(void);
-    static void IRAM_ATTR ISR4(void);
-    static void IRAM_ATTR ISR5(void);
-    static void IRAM_ATTR ISR6(void);
-    static void IRAM_ATTR ISR7(void);
 };
     //use global variables because static doesn't work
     
