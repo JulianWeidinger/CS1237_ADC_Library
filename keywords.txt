@@ -6,19 +6,50 @@
 # Datatypes (KEYWORD1)
 #######################################
 
-Keyboard	KEYWORD1
+CS1237	                    KEYWORD1
 
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
 
-begin	KEYWORD2
-write	KEYWORD2
-press	KEYWORD2
-release	KEYWORD2
-releaseAll	KEYWORD2
+CS1237                      KEYWORD2
+~CS1237                     KEYWORD2
+
+reading                     KEYWORD2
+send_clk_pulses             KEYWORD2
+raw_configure               KEYWORD2
+configure                   KEYWORD2
+read_without_interrupt      KEYWORD2
+start_reading               KEYWORD2
+end_reading                 KEYWORD2
+sleep                       KEYWORD2
+
+instanceISR                 KEYWORD2
+instance_timer_ISR          KEYWORD2
+timer_init                  KEYWORD2
+timer_stop                  KEYWORD2
+timer_ISR0                  KEYWORD2
+timer_ISR1                  KEYWORD2
+ISR0                        KEYWORD2     
+ISR1                        KEYWORD2
+
+
 
 #######################################
 # Constants (LITERAL1)
 #######################################
 
+
+
+SPEED_10                    LITERAL1
+SPEED_40                    LITERAL1
+SPEED_640                   LITERAL1
+SPEED_1280                  LITERAL1
+
+PGA_1                       LITERAL1
+PGA_2                       LITERAL1
+PGA_64                      LITERAL1
+PGA_128                     LITERAL1
+
+CHANNEL_A                   LITERAL1
+CHANNEL_Temp                LITERAL1

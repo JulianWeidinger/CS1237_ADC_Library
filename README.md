@@ -2,7 +2,8 @@
 
 This is the library for the CS1237-IC from Chipsea. the translated datasheet can be found [here](https://github.com/rafaellcoellho/cs1237-datasheet/blob/master/cs1237_datasheet.pdf)
 
-The library is designed to be used with one or two CS1237-ADCs-Chips, because if you uses the high frequency mode (1280Hz), the timing is though.
+The library is designed to be used with one or two CS1237-ADCs-Chips, because if you uses the high frequency mode (1280Hz), the timing is though. The gain (1,2,64,128), the sample rate(10Hz,40Hz,640Hz,1280Hz), the reference voltage (internal, or external) 
+and the channel(external diferential signal, temperature sensor) can be configured.
 
 You have to use one Clock line for each ADC. I have experimented with multiple ADC-Chips on one clock-line, but it is impossible to snchronize these chips.
 Synchronisation is very important, because depending on the configured sample rate there is a regular interrupt from the ADC Chip on the data line. 
