@@ -1,33 +1,47 @@
+/***************************************************************************
+/*!
+ * This is an example code for the library of the CS1237 ADC-Chip. Designed specifically to work
+ * with the ESP32 and two loadcells with a sample rate of 1280Hz.
+ * The ADC-Chip uses a SPI like interface with one clock- and one data-line.
+ *
+ * You can find an english datasheet here:
+ * https://github.com/rafaellcoellho/cs1237-datasheet/blob/master/cs1237_datasheet.pdf
+ *
+ *
+ * Written by Julian Weidinger for an university project
+ ***************************************************************************/
 
 #include <CS1237.h>
 
-#define SCK_1 12
-#define SCK_2 25
-#define DOUT_1 32
-#define DOUT_2 33
+// ADC-GPIOs
+#define SCK_1 12    ///< The clock-line GPIO-pin of the first ADC
+#define SCK_2 25    ///< The clock-line GPIO-pin of the second ADC
+#define DOUT_1 32   ///< The data-line GPIO-pin of the first ADC
+#define DOUT_2 33   ///< The data-line GPIO-pin of the second ADC
 
-#define ADC_COUNT 2
+#define ADC_COUNT 2 ///< The quantity of the connected ADCs
 
-#define READ 0x56
-#define WRITE 0x65
-
-CS1237 ADC_2(SCK_1, DOUT_1);
-CS1237 ADC_1(SCK_2, DOUT_2);
+// create the two ADC objects
+CS1237 ADC_1(SCK_1, DOUT_1);    ///< object of the first ADC
+CS1237 ADC_2(SCK_2, DOUT_2);    ///< object of the seconde ADC
 
 void setup()
 {
-    int32_t values[ADC_COUNT];
     Serial.begin(115200);
-    Serial.println("configuration: ");
+    Serial.print("configuration: ");
 
-    byte write[ADC_COUNT];
-    byte read[ADC_COUNT];
+//configure the ADCs: CS1237.configure(pointer to 24bit reading, gain setting, sample rate, channel)
 
-    if (ADC_1.configure(values, PGA_128, SPEED_1280, CHANNEL_A) && ADC_2.configure(values, PGA_128, SPEED_1280, CHANNEL_A))
+    int32_t values[ADC_COUNT];
+    if (ADC_1.configure(&values[0], PGA_128, SPEED_1280, CHANNEL_A) && ADC_2.configure(&values[1], PGA_128, SPEED_1280, CHANNEL_A))
         Serial.println("succeed");
     else
         Serial.println("failed");
+
+    //if you want to see the bit values of the confguraten uncomment the following lines
     /*
+        byte write[ADC_COUNT];
+        byte read[ADC_COUNT];
         write[0] = ADC_1.raw_configure(true, &values[0], byte(PGA_128), byte(SPEED_1280), byte(CHANNEL_A));
         read[0] = ADC_1.raw_configure(false, &values[0], byte(PGA_128), byte(SPEED_1280), byte(CHANNEL_A));
         write[1] = ADC_2.raw_configure(true, &values[1], byte(PGA_128), byte(SPEED_1280), byte(CHANNEL_A));
@@ -50,20 +64,27 @@ void setup()
             Serial.print(read[i], BIN);
             Serial.print("; ");
         }
-        */
+    */
+
+//start the backround reading of both ADCs
     Serial.println("");
     ADC_1.start_reading();
-    Serial.println("ADC1 started");
+    ADC_1.tare(1000);
+    Serial.println("ADC1 started and tared");
     ADC_2.start_reading();
-    Serial.println("ADC2 started");
+    ADC_2.tare(1000);
+    Serial.println("ADC2 started and tared");
+    Serial.println("");
+
 }
 
 void loop()
 {
-    // Serial.print("ADC1: ");
+    //print the meausred values constantly
     Serial.print(ADC_1.reading());
     Serial.print(",");
     Serial.println(ADC_2.reading());
 
-    //delayMicroseconds(int(1000000 / 1280));
+    // uncomment the following line to delay for lower frequencys, for 1280Hz the Serial.print comment tooks a similar time like the delay
+    // delayMicroseconds(int(1000000 / 1280));
 }

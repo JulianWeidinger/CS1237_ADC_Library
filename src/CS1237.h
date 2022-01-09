@@ -1,57 +1,69 @@
 /*!
  * @file CS1237.h
  *
- * This is a library for the CS1237-IC converts the readings of a loadcell in
- * 24bit digital numbers
+ * This is a library for the CS1237-IC to convert the analog readings 
+ * of a diferential signal in 24bit digital numbers
  *
  *
  * The Chip communicates through a 2-wire SPI interface SCLK, DRDY/DOUT,
- * 2 GPIO-pins are required to interface with the CS1237-IC.
+ * two GPIO-pins are required to interface with the CS1237-IC.
  *
  * Written by Julian Weidinger for an University Project.
- * BSD license, all text above must be included in any redistribution
  */
 
 #ifndef CS1237_h
 #define CS1237_h
 
-
-// command to read or write the configuration
-#define READ_ADC_CONFIG 0x56
-#define WRITE_ADC_CONFIG 0x65
-
-//
-#define MAX_ADCS 2
-#define TIMER_PRESCALER 80 // 12.5ns*80 = 1000ns
-
-// configuration commands
-#define SPEED_10 0b00000000
-#define SPEED_40 0b00010000
-#define SPEED_640 0b00100000
-#define SPEED_1280 0b00110000
-
-#define PGA_1 0b00000000
-#define PGA_2 0b00000100
-#define PGA_64 0b00001000
-#define PGA_128 0b00001100
-
-#define CHANNEL_A 0b00000000
-#define CHANNEL_Temp 0b00000010
-
+//include the standart arduino library
 #include <Arduino.h>
 
+//read or write the configuration register
+#define READ_ADC_CONFIG 0x56        ///< command to read the configuration register.
+#define WRITE_ADC_CONFIG 0x65       ///< command to write to the the configuration register.
+
+//! library specific definitions
+#define MAX_ADCS 2                      ///< maximum usable ADCs
+#define TIMER_PRESCALER 80              ///< 12.5ns*80 = 1000ns, so every 1000ns the timer will be count up.
+#define CALL_TIMER_INTERRUPT 6          ///< so after 6 counts of the timer the interrupt function will be called. --> so every 6us
+#define WAITING_TIME_TO_SLEEP 100       ///< [us] the time the chip needs to go to sleep, in the datasheet its said 100us
+
+
+// configuration commands
+#define SPEED_10 0b00000000         ///< The register value, if the sample rate is set to 10 Hz.
+#define SPEED_40 0b00010000         ///< The register value, if the sample rate is set to 40 Hz.
+#define SPEED_640 0b00100000        ///< The register value, if the sample rate is set to 640 Hz.
+#define SPEED_1280 0b00110000       ///< The register value, if the sample rate is set to 1280 Hz.
+
+#define PGA_1 0b00000000            ///< The register value, if the gain is set to 1.
+#define PGA_2 0b00000100            ///< The register value, if the gain is set to 2.
+#define PGA_64 0b00001000           ///< The register value, if the gain is set to 64.
+#define PGA_128 0b00001100          ///< The register value, if the gain is set to 128.
+
+#define CHANNEL_A 0b00000000        ///< The register value, if the channel A is selected.
+#define CHANNEL_Temp 0b00000010     ///< The register value, if the internal temperature channel is selected.
+
+
+
 /*!
- * @brief Main BMP085 class
+ * @brief CS1237 class
+ *          \n \n The class is intended to configure and read the values of the ADC, 
+ *          \n especially to read it in the background with hardware and timer interrupts, 
+ *          \n while the main loop is running and other actions are in progress.
+ *          \n The number of instances is limited to two, because the timing 
+ *          \n of the data transmission is critical, when the high sample rate is set,
+ *          \n if you have more than two instances.
  */
+
 class CS1237
 {
 private:
+
     //variables for ADC configuration
     //! @param _sck private variable of the clock-pin
     uint8_t _sck;
     //! @param _dout private variable of the dout-pin of the first ADC
     uint8_t _dout;
-    //! @param sleep private variabel of the sleep state of the chip
+    //! @param _sleep private variabel of the sleep state of the chip
     uint8_t _sleep;
 
     //variables for the object definition
@@ -67,33 +79,30 @@ private:
     volatile int32_t _value;
     //! @param _interrupt_reading private flag to know, if there is an interrupt reading in process or not
     bool _interrupt_reading = false;
+
+
 public:
-    /*!
-     * @brief test to establish a connection to the CS1237
-     * @param mode Mode to set, ultra high-res by default
-     * @param wire The I2C interface to use, defaults to Wire
-     * @return Returns true if the gain was set successfully and the chip is ready
-     */
+    //public variables 
+    //! @param _offset public variable for the offset of the measured analog signal
+    int32_t _offset = 0;
 
-    
-
-
-
-
+    //public functions
     CS1237(uint8_t sck, uint8_t dout);
     ~CS1237();
     int32_t reading();
-    void send_clk_pulses(byte count);
+    void send_clk_pulses(byte count_);
     byte raw_configure(bool write, int32_t *result = NULL, byte gain = PGA_128, byte speed = SPEED_1280, byte channel = CHANNEL_A);
     bool configure(int32_t *result, byte gain = PGA_128, byte speed = SPEED_1280, byte channel = CHANNEL_A);
+    void tare(uint16_t time_);
     int32_t read_without_interrupt(void);
     void start_reading(void);
     void end_reading(void);
     void sleep(bool sleep_ = true);
-    
-    void instanceISR(void); // Instance ISR handler called from static ISR globalISRx
-    void instance_timer_ISR(void);
-    void IRAM_ATTR timer_init(uint8_t object_number_);
+
+    //interrupt and timer functions
+    void IRAM_ATTR instance_ISR(void);                                 
+    void IRAM_ATTR instance_timer_ISR(void);                         
+    void IRAM_ATTR timer_init(uint8_t object_number_);  	
     void IRAM_ATTR timer_stop(uint8_t object_number_);
 
     static void IRAM_ATTR timer_ISR0(void);
@@ -102,7 +111,5 @@ public:
     static void IRAM_ATTR ISR0(void);
     static void IRAM_ATTR ISR1(void);
 };
-    //use global variables because static doesn't work
-    
-    
+   
 #endif  //CS1237
