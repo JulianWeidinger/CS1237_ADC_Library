@@ -19,6 +19,7 @@ reading                     KEYWORD2
 send_clk_pulses             KEYWORD2
 raw_configure               KEYWORD2
 configure                   KEYWORD2
+tare                        KEYWORD2  
 read_without_interrupt      KEYWORD2
 start_reading               KEYWORD2
 end_reading                 KEYWORD2

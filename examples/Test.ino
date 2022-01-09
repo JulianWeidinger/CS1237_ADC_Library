@@ -1,28 +1,29 @@
 /***************************************************************************
-  This is a library for the CS1237 ADC-Chip. Designed specifically to work
-  with the ESP32 and two loadcells with a sample rate of 1280Hz.
-  The ADC-Chip use a SPI like interface with one clock- and one data-line.
-
-  You can find an english datasheet here:
-  https://github.com/rafaellcoellho/cs1237-datasheet/blob/master/cs1237_datasheet.pdf
-
-
-  Written by Julian Weidinger for an university project
+/*!
+ * This is an example code for the library of the CS1237 ADC-Chip. Designed specifically to work
+ * with the ESP32 and two loadcells with a sample rate of 1280Hz.
+ * The ADC-Chip uses a SPI like interface with one clock- and one data-line.
+ *
+ * You can find an english datasheet here:
+ * https://github.com/rafaellcoellho/cs1237-datasheet/blob/master/cs1237_datasheet.pdf
+ *
+ *
+ * Written by Julian Weidinger for an university project
  ***************************************************************************/
 
 #include <CS1237.h>
 
 // ADC-GPIOs
-#define SCK_1 12
-#define SCK_2 25
-#define DOUT_1 32
-#define DOUT_2 33
+#define SCK_1 12    ///< The clock-line GPIO-pin of the first ADC
+#define SCK_2 25    ///< The clock-line GPIO-pin of the second ADC
+#define DOUT_1 32   ///< The data-line GPIO-pin of the first ADC
+#define DOUT_2 33   ///< The data-line GPIO-pin of the second ADC
 
-#define ADC_COUNT 2
+#define ADC_COUNT 2 ///< The quantity of the connected ADCs
 
 // create the two ADC objects
-CS1237 ADC_1(SCK_1, DOUT_1);
-CS1237 ADC_2(SCK_2, DOUT_2);
+CS1237 ADC_1(SCK_1, DOUT_1);    ///< object of the first ADC
+CS1237 ADC_2(SCK_2, DOUT_2);    ///< object of the seconde ADC
 
 void setup()
 {
@@ -30,6 +31,7 @@ void setup()
     Serial.print("configuration: ");
 
 //configure the ADCs: CS1237.configure(pointer to 24bit reading, gain setting, sample rate, channel)
+
     int32_t values[ADC_COUNT];
     if (ADC_1.configure(&values[0], PGA_128, SPEED_1280, CHANNEL_A) && ADC_2.configure(&values[1], PGA_128, SPEED_1280, CHANNEL_A))
         Serial.println("succeed");

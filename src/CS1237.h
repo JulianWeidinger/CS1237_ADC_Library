@@ -94,7 +94,7 @@ public:
     void send_clk_pulses(byte count_);
     byte raw_configure(bool write, int32_t *result = NULL, byte gain = PGA_128, byte speed = SPEED_1280, byte channel = CHANNEL_A);
     bool configure(int32_t *result, byte gain = PGA_128, byte speed = SPEED_1280, byte channel = CHANNEL_A);
-    void tare(uint16_t time);
+    void tare(uint16_t time_);
     int32_t read_without_interrupt(void);
     void start_reading(void);
     void end_reading(void);
