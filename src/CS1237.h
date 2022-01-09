@@ -54,6 +54,7 @@
  *          of the data transmission, when you use the high sample rate is set is critical, 
  *          if you have more than two instances.
  */
+
 class CS1237
 {
 private:
