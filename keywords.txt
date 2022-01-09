@@ -8,6 +8,16 @@
 
 CS1237	                    KEYWORD1
 
+_offset                     KEYWORD1
+
+CS1237_ISRfunc[]            KEYWORD1
+CS1237_timer_ISRfunc[]      KEYWORD1
+CS1237_ISR_used[]           KEYWORD1
+CS1237_instance[]           KEYWORD1
+CS1237_timer[]              KEYWORD1
+Mux                         KEYWORD1
+block_timer[]               KEYWORD1
+
 #######################################
 # Methods and Functions (KEYWORD2)
 #######################################
