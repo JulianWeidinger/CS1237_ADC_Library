@@ -6,6 +6,7 @@
  * @section intro_sec Introduction
  *
  * This is the library for the ADC "CS1237" from Chipsea. the translated datasheet can be found [here](https://github.com/rafaellcoellho/cs1237-datasheet/blob/master/cs1237_datasheet.pdf)
+ * Every interface and timing information of the CS1237-Chip is taken out of this datasheet and isn't extra cited.
  *
  * The library is designed to be used with one or two ADCs. The reason is, that if high frequency mode (1280Hz) is used, the timing is critical.
  *
