@@ -46,13 +46,12 @@
 
 /*!
  * @brief CS1237 class
- *  
- *          The class is intended to configure and read the values of the ADC, 
- *          especially to read it in the background with hardware and timer interrupts, 
- *          while the main loop is running and other actions are in progress.
- *          The number of instances is limited to two, because ther are the timing
- *          of the data transmission, when you use the high sample rate is set is critical, 
- *          if you have more than two instances.
+ *          \n \n The class is intended to configure and read the values of the ADC, 
+ *          \n especially to read it in the background with hardware and timer interrupts, 
+ *          \n while the main loop is running and other actions are in progress.
+ *          \n The number of instances is limited to two, because the timing 
+ *          \n of the data transmission is critical, when the high sample rate is set,
+ *          \n if you have more than two instances.
  */
 
 class CS1237
@@ -64,7 +63,7 @@ private:
     uint8_t _sck;
     //! @param _dout private variable of the dout-pin of the first ADC
     uint8_t _dout;
-    //! @param sleep private variabel of the sleep state of the chip
+    //! @param _sleep private variabel of the sleep state of the chip
     uint8_t _sleep;
 
     //variables for the object definition

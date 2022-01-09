@@ -76,10 +76,6 @@ void setup()
     Serial.println("ADC2 started and tared");
     Serial.println("");
 
-    
-    
-
-
 }
 
 void loop()
