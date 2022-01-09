@@ -1,20 +1,24 @@
 /*!
  * @file CS1237.cpp
  *
- * @mainpage ADC-CS1237 Library from Julian Weidinger 
+ * @mainpage ADC (CS1237) Library from Julian Weidinger 
  *
  * @section intro_sec Introduction
  *
- * This is the library for the CS1237-IC from Chipsea. the translated datasheet can be found [here](https://github.com/rafaellcoellho/cs1237-datasheet/blob/master/cs1237_datasheet.pdf)
+ * This is the library for the ADC "CS1237" from Chipsea. the translated datasheet can be found [here](https://github.com/rafaellcoellho/cs1237-datasheet/blob/master/cs1237_datasheet.pdf)
  * 
- * The library is designed to be used with one or two CS1237-ADCs-Chips, because if you uses the high frequency mode (1280Hz), the timing is though. The gain (1,2,64,128), the sample rate(10Hz,40Hz,640Hz,1280Hz), the reference voltage (internal, or external) 
- * and the channel(external diferential signal, temperature sensor) can be configured.
+ * The library is designed to be used with one or two ADCs. The reason is, that if high frequency mode (1280Hz) is used, the timing is critical. 
  * 
- * You have to use one Clock line for each ADC. I have experimented with multiple ADC-Chips on one clock-line, but it is impossible to snchronize these chips.
- * Synchronisation is very important, because depending on the configured sample rate there is a regular interrupt from the ADC Chip on the data line. 
+ * The gain (1,2,64,128), the sample rate(10Hz,40Hz,640Hz,1280Hz), the reference voltage (internal, or external) 
+ * and the channel(external diferential signal, temperature sensor) can be independent configured.
+ * 
+ * You have to use one clock- and one data-line for each ADC. I have experimented with multiple ADC-Chips on one clock-line, but it is impossible to snchronize these chips.
+ * I think the internal cristals are not exact. Synchronisation is very important, because depending on the configured sample rate there is a regular interrupt from the ADC Chip on the data line. 
  * If the data transmission is in progress, while the interrupt happens, the transmitted value is wrong.
  * 
- * This library is written with hardware and timer interrupts, so it can run in the background.
+ * This library is written with hardware and timer interrupt service routines, so it can run in the background.
+ * 
+ * The source code and one example is available on [my github page](https://github.com/JulianWeidinger/CS1237_ADC_Library)
  * 
  * @section dependencies Dependencies
  * 
@@ -23,10 +27,9 @@
  *  - At this time it is only allowed to connect two ADCs with one clock and one data line each.
  *  - you could use nearly any GPIO for the clock lines and any GPIO with an interrupt function for the Data line.
  *
- *  
  * @section author Author
  *
- * Written by Julian Weidinger for an University Project.
+ * Written by Julian Weidinger for an university Project at the University of applied science.
  *
  */
 
@@ -117,6 +120,21 @@ CS1237::~CS1237()
         end_reading();
     CS1237_ISR_used[_object_number] = false;
 }
+
+/**************************************************************************/
+/*!
+    @brief  this is the function to return the last value of the measured analog signal.
+            
+            The function waits until the reading is finished, if a reading is in progress.
+            The function converts the measured data to a signed 32 bit integer and subtracts the offset, 
+            if the tare function has been called before. This value is returned.
+
+    @param  reading_
+            the local variable for the read value
+
+    @return the last value of the measured analog signal
+*/
+/**************************************************************************/
 
 int32_t CS1237::reading()
 {
@@ -457,7 +475,7 @@ void CS1237::sleep(bool sleep_)
 
 /**************************************************************************/
 /*!
-    @brief  this is the hardware interrupt fucntion of the specific instance.
+    @brief  this is the hardware interrupt function of the specific instance.
             
            If this function is called, there is a new reading available in the ADC.
            The flag to block the reading()-function is set, the hardware interrupt is detached.
@@ -537,7 +555,7 @@ void IRAM_ATTR CS1237::timer_stop(uint8_t object_number_)
 
 /**************************************************************************/
 /*!
-    @brief  this will be called every time the timer will be called.
+    @brief  this function will be called every time the timer will be called.
 
             the function will send 24 clock pulses and read the value of the ADC.
             After the reading process is finished, the flag to block the reading 
