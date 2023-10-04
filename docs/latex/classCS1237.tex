@@ -1,0 +1,446 @@
+\hypertarget{classCS1237}{}\doxysection{CS1237 Class Reference}
+\label{classCS1237}\index{CS1237@{CS1237}}
+
+
+\mbox{\hyperlink{classCS1237}{CS1237}} class ~\newline
+ ~\newline
+ The class is intended to configure and read the values of the ADC, ~\newline
+ especially to read it in the background with hardware and timer interrupts, ~\newline
+ while the main loop is running and other actions are in progress. ~\newline
+ The number of instances is limited to two, because the timing ~\newline
+ of the data transmission is critical, when the high sample rate is set, ~\newline
+ if you have more than two instances.  
+
+
+
+
+{\ttfamily \#include $<$CS1237.\+h$>$}
+
+\doxysubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\hyperlink{classCS1237_aa280772007c3e8a55852dd95cd508b15}{CS1237}} (uint8\+\_\+t sck, uint8\+\_\+t dout)
+\begin{DoxyCompactList}\small\item\em This is the constructor for the \mbox{\hyperlink{classCS1237}{CS1237}} class. ~\newline
+ ~\newline
+ It defines and initializes the clock and data GPIO-\/pins for the ADC. ~\newline
+ The function waits for the chip to wake up from sleep-\/ or power-\/down mode. ~\newline
+ Furthermore the instance is given a number, to know which interrupt functions has to be used. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_a5e75921ac7b11882cafe3a8e4d731c29}\label{classCS1237_a5e75921ac7b11882cafe3a8e4d731c29}} 
+\mbox{\hyperlink{classCS1237_a5e75921ac7b11882cafe3a8e4d731c29}{$\sim$\+CS1237}} ()
+\begin{DoxyCompactList}\small\item\em This is the destructor for the \mbox{\hyperlink{classCS1237}{CS1237}} class. ~\newline
+ ~\newline
+ It stops the background reading, makes sure that the interrupt functions ~\newline
+ are free to use for another object and deletes the created object of the \mbox{\hyperlink{classCS1237}{CS1237}} class. \end{DoxyCompactList}\item 
+int32\+\_\+t \mbox{\hyperlink{classCS1237_a376720c039ca4454203572226ff178a6}{reading}} ()
+\begin{DoxyCompactList}\small\item\em This is the function to return the last value of the measured analog signal. ~\newline
+ ~\newline
+ The function waits until the reading is finished, if a reading is in progress. ~\newline
+ The function converts the measured data to a signed 32-\/bit integer and subtracts the offset, ~\newline
+ if the tare function has been called before. This value (reading\+\_\+) is returned. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classCS1237_a3a75c5c7295fd2147cb12458167dc8b4}{send\+\_\+clk\+\_\+pulses}} (byte count\+\_\+)
+\begin{DoxyCompactList}\small\item\em This is a function to send a specific number of clock cycles. \end{DoxyCompactList}\item 
+byte \mbox{\hyperlink{classCS1237_aad8dc3138d4c5bfafeaceaef1b3d9fee}{raw\+\_\+configure}} (bool write, int32\+\_\+t $\ast$result=NULL, byte gain=\mbox{\hyperlink{CS1237_8h_a4319875a959aea8474ca6c1b004e4551}{PGA\+\_\+128}}, byte speed=\mbox{\hyperlink{CS1237_8h_a348a7b7eb6d50ad5c4d610a95378e861}{SPEED\+\_\+1280}}, byte channel=\mbox{\hyperlink{CS1237_8h_ac0d7906cb15245de34095a6b4885e7f2}{CHANNEL\+\_\+A}})
+\begin{DoxyCompactList}\small\item\em This is the function to configure the CS1237-\/\+Chip. ~\newline
+ ~\newline
+ The gain (1,2,64,128), the sample rate(10\+Hz,40\+Hz,640\+Hz,1280\+Hz), the reference voltage ~\newline
+ (internal, or external) and the channel(external diferential signal, temperature sensor) ~\newline
+ can be configured. This function uses delays so it needs a lot CPU time and is intended ~\newline
+ to be used only at the beginning. You can also read the last measured value of the ADC, ~\newline
+ but this is measured with the last configuration. ~\newline
+ The register configutation can be looked up in the \href{https://github.com/rafaellcoellho/cs1237-datasheet/blob/master/cs1237_datasheet.pdf}{\texttt{ datasheet}}. \end{DoxyCompactList}\item 
+bool \mbox{\hyperlink{classCS1237_ac7a225547db94a58f0b2c4f57d7ab5b8}{configure}} (int32\+\_\+t $\ast$result, byte gain=\mbox{\hyperlink{CS1237_8h_a4319875a959aea8474ca6c1b004e4551}{PGA\+\_\+128}}, byte speed=\mbox{\hyperlink{CS1237_8h_a348a7b7eb6d50ad5c4d610a95378e861}{SPEED\+\_\+1280}}, byte channel=\mbox{\hyperlink{CS1237_8h_ac0d7906cb15245de34095a6b4885e7f2}{CHANNEL\+\_\+A}})
+\begin{DoxyCompactList}\small\item\em This function should be called to make sure, the right configuration is set. ~\newline
+ ~\newline
+ This function calls the raw\+\_\+configure-\/function three times and writes and reads the configuration register value ~\newline
+ to make sure the right configuration is set. If the third time the wrote and read registers are different, ~\newline
+ it returns a \char`\"{}false\char`\"{}, to indicate, that the configuration failed. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classCS1237_a46be604a726bb10a507340789c844b3f}{tare}} (uint16\+\_\+t time\+\_\+)
+\begin{DoxyCompactList}\small\item\em This function is used, to set the offset value of the analog signal. ~\newline
+ ~\newline
+ The measured analog signal is read for a specific time and added, ~\newline
+ to build the average of the measured values. ~\newline
+ The average is stored in the public variabele \+\_\+offset. \end{DoxyCompactList}\item 
+int32\+\_\+t \mbox{\hyperlink{classCS1237_afbd721fb5c50951825f2dbd708e52fa2}{read\+\_\+without\+\_\+interrupt}} (void)
+\begin{DoxyCompactList}\small\item\em This is the function to read the measured analog signal without interrupts. ~\newline
+ ~\newline
+ This function uses delays, so it is intended for the initialization and tare process. ~\newline
+ This function sends 24 clock cycles to read the data. ~\newline
+ If the read value is negative it is also converted to a signed 32-\/bit integer. ~\newline
+ The offset is also taken in account. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_ae54e684b882615ed5b59a16dd43ece70}\label{classCS1237_ae54e684b882615ed5b59a16dd43ece70}} 
+void \mbox{\hyperlink{classCS1237_ae54e684b882615ed5b59a16dd43ece70}{start\+\_\+reading}} (void)
+\begin{DoxyCompactList}\small\item\em This function will start the background reading of the ADC-\/values. ~\newline
+ ~\newline
+ In this function some flags are set, to make sure, ~\newline
+ the reading won\textquotesingle{}t collide with readings from other instances, ~\newline
+ because the same timer is shared with every instance. ~\newline
+ If no other instance is in the reading process, ~\newline
+ the timer will start instant to read the last ADC-\/value. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_ab35b70a095ca29beffcac2f043711673}\label{classCS1237_ab35b70a095ca29beffcac2f043711673}} 
+void \mbox{\hyperlink{classCS1237_ab35b70a095ca29beffcac2f043711673}{end\+\_\+reading}} (void)
+\begin{DoxyCompactList}\small\item\em This function ends the backgorund reading process. ~\newline
+ ~\newline
+ The timer and the GPIO interrupt will be disabled ~\newline
+ and the ADC is set to sleep mode. \end{DoxyCompactList}\item 
+void \mbox{\hyperlink{classCS1237_a0da1c160cd03b282c2ea077d00c81506}{sleep}} (bool sleep\+\_\+=true)
+\begin{DoxyCompactList}\small\item\em This function sets the ADC to sleep mode or wakes the ADC up. ~\newline
+ ~\newline
+ Furthermore the sleep function makes sure, that after the return ~\newline
+ the interrupt of the ADC has happend, to make sure a read operation ~\newline
+ won\textquotesingle{}t collide with this interrupt, but only if the sleep\+\_\+-\/flag is set to false. \end{DoxyCompactList}\item 
+void IRAM\+\_\+\+ATTR \mbox{\hyperlink{classCS1237_af51b46214e9c3f6e84cf6ad38c642cc9}{instance\+\_\+\+ISR}} (void)
+\begin{DoxyCompactList}\small\item\em This is the hardware interrupt function of the specific instance. ~\newline
+ ~\newline
+ If this function is called, there is a new reading available in the ADC. ~\newline
+ The flag to block the \mbox{\hyperlink{classCS1237_a376720c039ca4454203572226ff178a6}{reading()}}-\/function is set, the hardware interrupt is detached ~\newline
+ and the timer is started. Furthermore this function is attached to the RAM, to be as fast as possible. \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_a5c8bbee76f35f767d254c6924d8b6f17}\label{classCS1237_a5c8bbee76f35f767d254c6924d8b6f17}} 
+void IRAM\+\_\+\+ATTR \mbox{\hyperlink{classCS1237_a5c8bbee76f35f767d254c6924d8b6f17}{instance\+\_\+timer\+\_\+\+ISR}} (void)
+\begin{DoxyCompactList}\small\item\em This function will be called every time the timer interrrupt will be called. ~\newline
+ ~\newline
+ the function will send 24 clock pulses and read the value of the ADC. ~\newline
+ After the reading process is finished, the flag to block the reading ~\newline
+ process is released, the hardware interrupt is attached again, the timer ~\newline
+ is released and if a another instance is waiting to get the timer, ~\newline
+ the timer is set for the other instance. ~\newline
+ Furthermore this function is attached to the RAM, to be as fast as possible. \end{DoxyCompactList}\item 
+void IRAM\+\_\+\+ATTR \mbox{\hyperlink{classCS1237_a1ce399a83091e05df42c79303b5cb45c}{timer\+\_\+init}} (uint8\+\_\+t object\+\_\+number\+\_\+)
+\begin{DoxyCompactList}\small\item\em This function sets the timer for the reading process ~\newline
+ ~\newline
+ Furthermore this function is attached to the RAM, to be as fast as possible. ~\newline
+ ~\newline
+ \href{https://techtutorialsx.com/2017/10/07/esp32-arduino-timer-interrupts/}{\texttt{ Quelle}} \end{DoxyCompactList}\item 
+void IRAM\+\_\+\+ATTR \mbox{\hyperlink{classCS1237_affc8da2fc9e584910edc42fadee38f6d}{timer\+\_\+stop}} (uint8\+\_\+t object\+\_\+number\+\_\+)
+\begin{DoxyCompactList}\small\item\em This function disables the timer ~\newline
+ ~\newline
+ Furthermore this function is attached to the RAM, to be as fast as possible. ~\newline
+ ~\newline
+ \href{https://techtutorialsx.com/2017/10/07/esp32-arduino-timer-interrupts/}{\texttt{ Quelle}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Static Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classCS1237_aebe218256872521e80fc1af91f0d2894}\label{classCS1237_aebe218256872521e80fc1af91f0d2894}} 
+static void IRAM\+\_\+\+ATTR \mbox{\hyperlink{classCS1237_aebe218256872521e80fc1af91f0d2894}{timer\+\_\+\+ISR0}} (void)
+\begin{DoxyCompactList}\small\item\em This function will be called, when a hardware interrupt of the first instance happens. ~\newline
+ ~\newline
+ Because the function is static, it can not access the nonstatic variables, ~\newline
+ so a nonstatic function pointer is given and will call this nonstatic function. ~\newline
+ Furthermore this function is attached to the RAM, to be as fast as possible. ~\newline
+ ~\newline
+ \href{https://arduinoplusplus.wordpress.com/2021/02/05/interrupts-and-c-class-instances/}{\texttt{ Quelle\+\_\+1}} ~\newline
+ \href{https://techtutorialsx.com/2017/10/07/esp32-arduino-timer-interrupts/}{\texttt{ Quelle\+\_\+2}} \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_a2a64cf672fdc5f53ee7cf1725cc952b9}\label{classCS1237_a2a64cf672fdc5f53ee7cf1725cc952b9}} 
+static void IRAM\+\_\+\+ATTR \mbox{\hyperlink{classCS1237_a2a64cf672fdc5f53ee7cf1725cc952b9}{timer\+\_\+\+ISR1}} (void)
+\begin{DoxyCompactList}\small\item\em This function will be called when a hardware interrupt of the second instance happens. ~\newline
+ ~\newline
+ Because the function is static, it cannot acces the nonstatic variables, ~\newline
+ so a nonstatic function pointer is given and will call this nonstatic function. ~\newline
+ Furthermore this function is attached to the RAM, to be as fast as possible. ~\newline
+ ~\newline
+ \href{https://arduinoplusplus.wordpress.com/2021/02/05/interrupts-and-c-class-instances/}{\texttt{ Quelle\+\_\+1}} ~\newline
+ \href{https://techtutorialsx.com/2017/10/07/esp32-arduino-timer-interrupts/}{\texttt{ Quelle\+\_\+2}} \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_a362380364fe2de6ae2ad122cb1d4e85b}\label{classCS1237_a362380364fe2de6ae2ad122cb1d4e85b}} 
+static void IRAM\+\_\+\+ATTR \mbox{\hyperlink{classCS1237_a362380364fe2de6ae2ad122cb1d4e85b}{ISR0}} (void)
+\begin{DoxyCompactList}\small\item\em This function will be called when a timer interrupt of the first instance happens. ~\newline
+ ~\newline
+ Because the function is static, it cannot acces the nonstatic variables, ~\newline
+ so a nonstatic function pointer is given and will call this nonstatic function. ~\newline
+ Furthermore this function is attached to the RAM, to be as fast as possible. ~\newline
+ ~\newline
+ \href{https://arduinoplusplus.wordpress.com/2021/02/05/interrupts-and-c-class-instances/}{\texttt{ Quelle\+\_\+1}} ~\newline
+ \href{https://techtutorialsx.com/2017/09/30/esp32-arduino-external-interrupts/}{\texttt{ Quelle\+\_\+2}} \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_a928167e012ae09f25492c6d609ada092}\label{classCS1237_a928167e012ae09f25492c6d609ada092}} 
+static void IRAM\+\_\+\+ATTR \mbox{\hyperlink{classCS1237_a928167e012ae09f25492c6d609ada092}{ISR1}} (void)
+\begin{DoxyCompactList}\small\item\em This function will be called when a timer interrupt of the second instance happens. ~\newline
+ ~\newline
+ Because the function is static, it cannot acces the nonstatic variables, ~\newline
+ so a nonstatic function pointer is given and will call this nonstatic function. ~\newline
+ Furthermore this function is attached to the RAM, to be as fast as possible. ~\newline
+ ~\newline
+ \href{https://arduinoplusplus.wordpress.com/2021/02/05/interrupts-and-c-class-instances/}{\texttt{ Quelle\+\_\+1}} ~\newline
+ \href{https://techtutorialsx.com/2017/09/30/esp32-arduino-external-interrupts/}{\texttt{ Quelle\+\_\+2}} \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classCS1237_ada6256dd58f151100cdf99611a9129e2}\label{classCS1237_ada6256dd58f151100cdf99611a9129e2}} 
+int32\+\_\+t \mbox{\hyperlink{classCS1237_ada6256dd58f151100cdf99611a9129e2}{\+\_\+offset}} = 0
+\begin{DoxyCompactList}\small\item\em public variable for the offset of the measured analog signal \end{DoxyCompactList}\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+\mbox{\hyperlink{classCS1237}{CS1237}} class ~\newline
+ ~\newline
+ The class is intended to configure and read the values of the ADC, ~\newline
+ especially to read it in the background with hardware and timer interrupts, ~\newline
+ while the main loop is running and other actions are in progress. ~\newline
+ The number of instances is limited to two, because the timing ~\newline
+ of the data transmission is critical, when the high sample rate is set, ~\newline
+ if you have more than two instances. 
+
+\doxysubsection{Constructor \& Destructor Documentation}
+\mbox{\Hypertarget{classCS1237_aa280772007c3e8a55852dd95cd508b15}\label{classCS1237_aa280772007c3e8a55852dd95cd508b15}} 
+\index{CS1237@{CS1237}!CS1237@{CS1237}}
+\index{CS1237@{CS1237}!CS1237@{CS1237}}
+\doxysubsubsection{\texorpdfstring{CS1237()}{CS1237()}}
+{\footnotesize\ttfamily CS1237\+::\+CS1237 (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{sck,  }\item[{uint8\+\_\+t}]{dout }\end{DoxyParamCaption})}
+
+
+
+This is the constructor for the \mbox{\hyperlink{classCS1237}{CS1237}} class. ~\newline
+ ~\newline
+ It defines and initializes the clock and data GPIO-\/pins for the ADC. ~\newline
+ The function waits for the chip to wake up from sleep-\/ or power-\/down mode. ~\newline
+ Furthermore the instance is given a number, to know which interrupt functions has to be used. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sck} & The GPIO number of the clock line.\\
+\hline
+{\em dout} & The GPIO number of the data line. \\
+\hline
+\end{DoxyParams}
+
+
+\doxysubsection{Member Function Documentation}
+\mbox{\Hypertarget{classCS1237_ac7a225547db94a58f0b2c4f57d7ab5b8}\label{classCS1237_ac7a225547db94a58f0b2c4f57d7ab5b8}} 
+\index{CS1237@{CS1237}!configure@{configure}}
+\index{configure@{configure}!CS1237@{CS1237}}
+\doxysubsubsection{\texorpdfstring{configure()}{configure()}}
+{\footnotesize\ttfamily bool CS1237\+::configure (\begin{DoxyParamCaption}\item[{int32\+\_\+t $\ast$}]{result,  }\item[{byte}]{gain = {\ttfamily \mbox{\hyperlink{CS1237_8h_a4319875a959aea8474ca6c1b004e4551}{PGA\+\_\+128}}},  }\item[{byte}]{speed = {\ttfamily \mbox{\hyperlink{CS1237_8h_a348a7b7eb6d50ad5c4d610a95378e861}{SPEED\+\_\+1280}}},  }\item[{byte}]{channel = {\ttfamily \mbox{\hyperlink{CS1237_8h_ac0d7906cb15245de34095a6b4885e7f2}{CHANNEL\+\_\+A}}} }\end{DoxyParamCaption})}
+
+
+
+This function should be called to make sure, the right configuration is set. ~\newline
+ ~\newline
+ This function calls the raw\+\_\+configure-\/function three times and writes and reads the configuration register value ~\newline
+ to make sure the right configuration is set. If the third time the wrote and read registers are different, ~\newline
+ it returns a \char`\"{}false\char`\"{}, to indicate, that the configuration failed. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em value} & This is a pointer to the variable, where the function should store the read value.\\
+\hline
+{\em gain} & This is the register value of the gain, which has to be set.\\
+\hline
+{\em speed} & This is the register value of the sample rate, which has to be set.\\
+\hline
+{\em channel} & This is the register value of the channel, which has to be set.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the flag to show, if the configuration succeeded, or failed. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classCS1237_af51b46214e9c3f6e84cf6ad38c642cc9}\label{classCS1237_af51b46214e9c3f6e84cf6ad38c642cc9}} 
+\index{CS1237@{CS1237}!instance\_ISR@{instance\_ISR}}
+\index{instance\_ISR@{instance\_ISR}!CS1237@{CS1237}}
+\doxysubsubsection{\texorpdfstring{instance\_ISR()}{instance\_ISR()}}
+{\footnotesize\ttfamily void IRAM\+\_\+\+ATTR CS1237\+::instance\+\_\+\+ISR (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+This is the hardware interrupt function of the specific instance. ~\newline
+ ~\newline
+ If this function is called, there is a new reading available in the ADC. ~\newline
+ The flag to block the \mbox{\hyperlink{classCS1237_a376720c039ca4454203572226ff178a6}{reading()}}-\/function is set, the hardware interrupt is detached ~\newline
+ and the timer is started. Furthermore this function is attached to the RAM, to be as fast as possible. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sleep\+\_\+} & This is a local flag to either put the device in sleep mode or wake it up. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classCS1237_aad8dc3138d4c5bfafeaceaef1b3d9fee}\label{classCS1237_aad8dc3138d4c5bfafeaceaef1b3d9fee}} 
+\index{CS1237@{CS1237}!raw\_configure@{raw\_configure}}
+\index{raw\_configure@{raw\_configure}!CS1237@{CS1237}}
+\doxysubsubsection{\texorpdfstring{raw\_configure()}{raw\_configure()}}
+{\footnotesize\ttfamily byte CS1237\+::raw\+\_\+configure (\begin{DoxyParamCaption}\item[{bool}]{write,  }\item[{int32\+\_\+t $\ast$}]{result = {\ttfamily NULL},  }\item[{byte}]{gain = {\ttfamily \mbox{\hyperlink{CS1237_8h_a4319875a959aea8474ca6c1b004e4551}{PGA\+\_\+128}}},  }\item[{byte}]{speed = {\ttfamily \mbox{\hyperlink{CS1237_8h_a348a7b7eb6d50ad5c4d610a95378e861}{SPEED\+\_\+1280}}},  }\item[{byte}]{channel = {\ttfamily \mbox{\hyperlink{CS1237_8h_ac0d7906cb15245de34095a6b4885e7f2}{CHANNEL\+\_\+A}}} }\end{DoxyParamCaption})}
+
+
+
+This is the function to configure the CS1237-\/\+Chip. ~\newline
+ ~\newline
+ The gain (1,2,64,128), the sample rate(10\+Hz,40\+Hz,640\+Hz,1280\+Hz), the reference voltage ~\newline
+ (internal, or external) and the channel(external diferential signal, temperature sensor) ~\newline
+ can be configured. This function uses delays so it needs a lot CPU time and is intended ~\newline
+ to be used only at the beginning. You can also read the last measured value of the ADC, ~\newline
+ but this is measured with the last configuration. ~\newline
+ The register configutation can be looked up in the \href{https://github.com/rafaellcoellho/cs1237-datasheet/blob/master/cs1237_datasheet.pdf}{\texttt{ datasheet}}. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em write} & This is the flag, if the function should read or write the configuration register.\\
+\hline
+{\em value} & This is a pointer to the variable where the function should store the measured analog signal.\\
+\hline
+{\em gain} & This is the register value of the gain, which has to be set.\\
+\hline
+{\em speed} & This is the register value of the sample rate, which has to be set.\\
+\hline
+{\em channel} & This is the register value of the channel, which has to be set.\\
+\hline
+{\em register\+\_\+value} & This is the value of the register, where all \char`\"{}handed over variables\char`\"{} are combined to get the full register values ~\newline
+ Depending on the write-\/flag this is the sent, or the read register-\/value.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value of the configuration register is returned as a byte variable. ~\newline
+ Depending on the write-\/flag this is the sent, or the read register-\/value. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classCS1237_afbd721fb5c50951825f2dbd708e52fa2}\label{classCS1237_afbd721fb5c50951825f2dbd708e52fa2}} 
+\index{CS1237@{CS1237}!read\_without\_interrupt@{read\_without\_interrupt}}
+\index{read\_without\_interrupt@{read\_without\_interrupt}!CS1237@{CS1237}}
+\doxysubsubsection{\texorpdfstring{read\_without\_interrupt()}{read\_without\_interrupt()}}
+{\footnotesize\ttfamily int32\+\_\+t CS1237\+::read\+\_\+without\+\_\+interrupt (\begin{DoxyParamCaption}\item[{void}]{ }\end{DoxyParamCaption})}
+
+
+
+This is the function to read the measured analog signal without interrupts. ~\newline
+ ~\newline
+ This function uses delays, so it is intended for the initialization and tare process. ~\newline
+ This function sends 24 clock cycles to read the data. ~\newline
+ If the read value is negative it is also converted to a signed 32-\/bit integer. ~\newline
+ The offset is also taken in account. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em reading\+\_\+} & the local variable for the read value\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the read value of measured analog signal (reading\+\_\+) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classCS1237_a376720c039ca4454203572226ff178a6}\label{classCS1237_a376720c039ca4454203572226ff178a6}} 
+\index{CS1237@{CS1237}!reading@{reading}}
+\index{reading@{reading}!CS1237@{CS1237}}
+\doxysubsubsection{\texorpdfstring{reading()}{reading()}}
+{\footnotesize\ttfamily int32\+\_\+t CS1237\+::reading (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+
+
+This is the function to return the last value of the measured analog signal. ~\newline
+ ~\newline
+ The function waits until the reading is finished, if a reading is in progress. ~\newline
+ The function converts the measured data to a signed 32-\/bit integer and subtracts the offset, ~\newline
+ if the tare function has been called before. This value (reading\+\_\+) is returned. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em reading\+\_\+} & the local variable to store the measured analog signal value in\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+the last value of the measured analog signal (reading\+\_\+) 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classCS1237_a3a75c5c7295fd2147cb12458167dc8b4}\label{classCS1237_a3a75c5c7295fd2147cb12458167dc8b4}} 
+\index{CS1237@{CS1237}!send\_clk\_pulses@{send\_clk\_pulses}}
+\index{send\_clk\_pulses@{send\_clk\_pulses}!CS1237@{CS1237}}
+\doxysubsubsection{\texorpdfstring{send\_clk\_pulses()}{send\_clk\_pulses()}}
+{\footnotesize\ttfamily void CS1237\+::send\+\_\+clk\+\_\+pulses (\begin{DoxyParamCaption}\item[{byte}]{count\+\_\+ }\end{DoxyParamCaption})}
+
+
+
+This is a function to send a specific number of clock cycles. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em count\+\_\+} & This is the variable for the number of clock cycles to send \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classCS1237_a0da1c160cd03b282c2ea077d00c81506}\label{classCS1237_a0da1c160cd03b282c2ea077d00c81506}} 
+\index{CS1237@{CS1237}!sleep@{sleep}}
+\index{sleep@{sleep}!CS1237@{CS1237}}
+\doxysubsubsection{\texorpdfstring{sleep()}{sleep()}}
+{\footnotesize\ttfamily void CS1237\+::sleep (\begin{DoxyParamCaption}\item[{bool}]{sleep\+\_\+ = {\ttfamily true} }\end{DoxyParamCaption})}
+
+
+
+This function sets the ADC to sleep mode or wakes the ADC up. ~\newline
+ ~\newline
+ Furthermore the sleep function makes sure, that after the return ~\newline
+ the interrupt of the ADC has happend, to make sure a read operation ~\newline
+ won\textquotesingle{}t collide with this interrupt, but only if the sleep\+\_\+-\/flag is set to false. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em sleep\+\_\+} & This is a local flag to either put the device in sleep mode or wake it up and wait for the first interrupt. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classCS1237_a46be604a726bb10a507340789c844b3f}\label{classCS1237_a46be604a726bb10a507340789c844b3f}} 
+\index{CS1237@{CS1237}!tare@{tare}}
+\index{tare@{tare}!CS1237@{CS1237}}
+\doxysubsubsection{\texorpdfstring{tare()}{tare()}}
+{\footnotesize\ttfamily void CS1237\+::tare (\begin{DoxyParamCaption}\item[{uint16\+\_\+t}]{time\+\_\+ }\end{DoxyParamCaption})}
+
+
+
+This function is used, to set the offset value of the analog signal. ~\newline
+ ~\newline
+ The measured analog signal is read for a specific time and added, ~\newline
+ to build the average of the measured values. ~\newline
+ The average is stored in the public variabele \+\_\+offset. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em time\+\_\+} & This variable sets, how long this function is in progress. ~\newline
+ ~\newline
+ It correlates with the quantity of the measured values for the average calculation.\\
+\hline
+{\em \+\_\+interrupt\+\_\+reading\+\_\+already\+\_\+startet} & This is a flag to know, if the background reading has already started, ~\newline
+ ~\newline
+ to make sure the background reading will go on or stop after this function.\\
+\hline
+{\em offset\+\_\+} & This is the sum value for building the average.\\
+\hline
+{\em offset\+\_\+count\+\_\+} & This is the counter, to know whats the quantity of the offset\+\_\+-\/variabel.\\
+\hline
+{\em start\+\_\+time} & This is the time variable to know, when to stop the function.\\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+The value of the configuration register is returned as a byte variable 
+\end{DoxyReturn}
+\mbox{\Hypertarget{classCS1237_a1ce399a83091e05df42c79303b5cb45c}\label{classCS1237_a1ce399a83091e05df42c79303b5cb45c}} 
+\index{CS1237@{CS1237}!timer\_init@{timer\_init}}
+\index{timer\_init@{timer\_init}!CS1237@{CS1237}}
+\doxysubsubsection{\texorpdfstring{timer\_init()}{timer\_init()}}
+{\footnotesize\ttfamily void IRAM\+\_\+\+ATTR CS1237\+::timer\+\_\+init (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{object\+\_\+number\+\_\+ }\end{DoxyParamCaption})}
+
+
+
+This function sets the timer for the reading process ~\newline
+ ~\newline
+ Furthermore this function is attached to the RAM, to be as fast as possible. ~\newline
+ ~\newline
+ \href{https://techtutorialsx.com/2017/10/07/esp32-arduino-timer-interrupts/}{\texttt{ Quelle}} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em object\+\_\+number\+\_\+} & This is the number of the object, where the timer should be attached, ~\newline
+ to make sure the correct nonstatic function will be called. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{classCS1237_affc8da2fc9e584910edc42fadee38f6d}\label{classCS1237_affc8da2fc9e584910edc42fadee38f6d}} 
+\index{CS1237@{CS1237}!timer\_stop@{timer\_stop}}
+\index{timer\_stop@{timer\_stop}!CS1237@{CS1237}}
+\doxysubsubsection{\texorpdfstring{timer\_stop()}{timer\_stop()}}
+{\footnotesize\ttfamily void IRAM\+\_\+\+ATTR CS1237\+::timer\+\_\+stop (\begin{DoxyParamCaption}\item[{uint8\+\_\+t}]{object\+\_\+number\+\_\+ }\end{DoxyParamCaption})}
+
+
+
+This function disables the timer ~\newline
+ ~\newline
+ Furthermore this function is attached to the RAM, to be as fast as possible. ~\newline
+ ~\newline
+ \href{https://techtutorialsx.com/2017/10/07/esp32-arduino-timer-interrupts/}{\texttt{ Quelle}} 
+
+
+\begin{DoxyParams}{Parameters}
+{\em object\+\_\+number\+\_\+} & This is the number of the object, where the timer should be disabled. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files\+:\begin{DoxyCompactItemize}
+\item 
+src/\mbox{\hyperlink{CS1237_8h}{CS1237.\+h}}\item 
+src/CS1237.\+cpp\end{DoxyCompactItemize}
