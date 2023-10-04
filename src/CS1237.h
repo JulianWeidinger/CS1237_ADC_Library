@@ -147,7 +147,7 @@ public:
         @param    write
                   This is the flag, if the function should read or write the configuration register.
 
-        @param    value
+        @param    result
                     This is a pointer to the variable where the function should store the measured analog signal.
 
         @param    gain
@@ -158,10 +158,6 @@ public:
 
         @param    channel
                     This is the register value of the channel, which has to be set.
-
-        @param    register_value
-                    This is the value of the register, where all "handed over variables" are combined to get the full register values
-                    \n Depending on the write-flag this is the sent, or the read register-value.
 
         @return The value of the configuration register is returned as a byte variable.
                     \n Depending on the write-flag this is the sent, or the read register-value.
@@ -175,7 +171,7 @@ public:
                \n to make sure the right configuration is set. If the third time the wrote and read registers are different,
                \n it returns a "false", to indicate, that the configuration failed.
 
-        @param    value
+        @param    result
                     This is a pointer to the variable, where the function should store the read value.
 
         @param    gain
@@ -201,20 +197,6 @@ public:
         @param    time_
                   This  variable sets, how long this function is in progress.
                   \n \n It correlates with the quantity of the measured values for the average calculation.
-
-        @param    _interrupt_reading_already_startet
-                    This is a flag to know, if the background reading has already started,
-                    \n \n to make sure the background reading will go on or stop after this function.
-
-        @param    offset_
-                    This is the sum value for building the average.
-
-        @param    offset_count_
-                    This is the counter, to know whats the quantity of the offset_-variabel.
-
-        @param    start_time
-                    This is the time variable to know, when to stop the function.
-
         @return The value of the configuration register is returned as a byte variable
     */
     void tare(uint16_t time_);
@@ -227,10 +209,7 @@ public:
                 \n If the read value is negative it is also converted to a signed 32-bit integer.
                 \n The offset is also taken in account.
 
-        @param  reading_
-                the local variable for the read value
-
-        @return the read value of measured analog signal (reading_)
+        @return the read value of measured analog signal
     */
     int32_t read_without_interrupt(void);
 
@@ -276,9 +255,6 @@ public:
                 \n \n If this function is called, there is a new reading available in the ADC.
                \n The flag to block the reading()-function is set, the hardware interrupt is detached
                \n and the timer is started. Furthermore this function is attached to the RAM, to be as fast as possible.
-
-        @param    sleep_
-                  This is a local flag to either put the device in sleep mode or wake it up.
     */
     void IRAM_ATTR instance_ISR(void);
 
