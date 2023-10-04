@@ -131,7 +131,7 @@ portMUX_TYPE Mux = portMUX_INITIALIZER_UNLOCKED;
 //! a global flag to know, if the timer is blocked, or which instance waiting for the timer.
 volatile bool block_timer[MAX_ADCS] = {false, false};
 
-/**************************************************************************/
+
 CS1237::CS1237(uint8_t sck, uint8_t dout)
 {
     // search for one of 2 free object spots
@@ -161,7 +161,7 @@ CS1237::CS1237(uint8_t sck, uint8_t dout)
     sleep(false);
 }
 
-/**************************************************************************/
+
 CS1237::~CS1237()
 {
     // end the background reading, if it is still in progess
@@ -172,7 +172,6 @@ CS1237::~CS1237()
     CS1237_ISR_used[_object_number] = false;
 }
 
-/**************************************************************************/
 int32_t CS1237::reading()
 {
 start_sending_reading:
@@ -191,7 +190,7 @@ start_sending_reading:
         goto start_sending_reading;
 }
 
-/**************************************************************************/
+
 int32_t CS1237::read_without_interrupt(void)
 {
     int32_t reading_ = 0;
@@ -217,7 +216,7 @@ int32_t CS1237::read_without_interrupt(void)
     return reading_;
 }
 
-/**************************************************************************/
+
 void CS1237::send_clk_pulses(byte count_)
 {
     // send the clock cycles
@@ -231,7 +230,7 @@ void CS1237::send_clk_pulses(byte count_)
     return;
 }
 
-/**************************************************************************/
+
 byte CS1237::raw_configure(bool write, int32_t *value, byte gain, byte speed, byte channel)
 {
 
@@ -282,7 +281,7 @@ byte CS1237::raw_configure(bool write, int32_t *value, byte gain, byte speed, by
     return register_value;
 }
 
-/**************************************************************************/
+
 bool CS1237::configure(int32_t *value, byte gain, byte speed, byte channel)
 {
     bool succeed = false;
@@ -304,7 +303,7 @@ bool CS1237::configure(int32_t *value, byte gain, byte speed, byte channel)
     return succeed;
 }
 
-/**************************************************************************/
+
 void CS1237::tare(uint16_t time_)
 {
     //start background reading, if it hasn't already started
@@ -332,7 +331,7 @@ void CS1237::tare(uint16_t time_)
     return;
 }
 
-/**************************************************************************/
+
 void CS1237::start_reading(void)
 {
     // wake the ADC up
@@ -362,7 +361,7 @@ void CS1237::start_reading(void)
     return;
 }    
 
-/**************************************************************************/
+
 void CS1237::end_reading(void)
 {
     timer_stop(_object_number);
@@ -371,7 +370,7 @@ void CS1237::end_reading(void)
     _interrupt_reading = false;
 }
 
-/**************************************************************************/
+
 void CS1237::sleep(bool sleep_)
 {
     if (sleep_)
@@ -394,7 +393,7 @@ void CS1237::sleep(bool sleep_)
     return;
 }
 
-/**************************************************************************/
+
 void IRAM_ATTR CS1237::instance_ISR(void)
 {
     portENTER_CRITICAL_ISR(&Mux);
@@ -424,7 +423,7 @@ void IRAM_ATTR CS1237::instance_ISR(void)
     portEXIT_CRITICAL_ISR(&Mux);
 }
 
-/**************************************************************************/
+
 void IRAM_ATTR CS1237::timer_init(uint8_t object_number_)
 {
     CS1237_timer[object_number_] = timerBegin(0, TIMER_PRESCALER, true);
@@ -433,7 +432,7 @@ void IRAM_ATTR CS1237::timer_init(uint8_t object_number_)
     timerAlarmEnable(CS1237_timer[object_number_]);
 }
 
-/**************************************************************************/
+
 void IRAM_ATTR CS1237::timer_stop(uint8_t object_number_)
 {
     timerAlarmDisable(CS1237_timer[object_number_]);
@@ -441,7 +440,7 @@ void IRAM_ATTR CS1237::timer_stop(uint8_t object_number_)
     timerEnd(CS1237_timer[object_number_]);
 }
 
-/**************************************************************************/
+
 void IRAM_ATTR CS1237::instance_timer_ISR(void)
 {
     portENTER_CRITICAL_ISR(&Mux);
@@ -477,14 +476,14 @@ void IRAM_ATTR CS1237::instance_timer_ISR(void)
     portEXIT_CRITICAL_ISR(&Mux);
 }
 
-/**************************************************************************/
+
 void IRAM_ATTR CS1237::timer_ISR0(void) { CS1237_instance[0]->instance_timer_ISR(); }
 
-/**************************************************************************/
+
 void IRAM_ATTR CS1237::timer_ISR1(void) { CS1237_instance[1]->instance_timer_ISR(); }
 
-/**************************************************************************/
+
 void IRAM_ATTR CS1237::ISR0(void) { CS1237_instance[0]->instance_ISR(); }
 
-/**************************************************************************/
+
 void IRAM_ATTR CS1237::ISR1(void) { CS1237_instance[1]->instance_ISR(); }
