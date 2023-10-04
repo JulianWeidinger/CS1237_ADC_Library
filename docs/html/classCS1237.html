@@ -65,6 +65,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pri-attribs">Private Attributes</a> &#124;
 <a href="classCS1237-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">CS1237 Class Reference</div>  </div>
@@ -252,6 +253,41 @@ Public Attributes</h2></td></tr>
 int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCS1237.html#ada6256dd58f151100cdf99611a9129e2">_offset</a> = 0</td></tr>
 <tr class="memdesc:ada6256dd58f151100cdf99611a9129e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">public variable for the offset of the measured analog signal <br /></td></tr>
 <tr class="separator:ada6256dd58f151100cdf99611a9129e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pri-attribs"></a>
+Private Attributes</h2></td></tr>
+<tr class="memitem:a1dab738f308f36197d96651d13fbf56a"><td class="memItemLeft" align="right" valign="top"><a id="a1dab738f308f36197d96651d13fbf56a"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCS1237.html#a1dab738f308f36197d96651d13fbf56a">_sck</a></td></tr>
+<tr class="memdesc:a1dab738f308f36197d96651d13fbf56a"><td class="mdescLeft">&#160;</td><td class="mdescRight">private variable of the clock-pin <br /></td></tr>
+<tr class="separator:a1dab738f308f36197d96651d13fbf56a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1c2e170ddaab5a8ada7bdacb19da759"><td class="memItemLeft" align="right" valign="top"><a id="ac1c2e170ddaab5a8ada7bdacb19da759"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCS1237.html#ac1c2e170ddaab5a8ada7bdacb19da759">_dout</a></td></tr>
+<tr class="memdesc:ac1c2e170ddaab5a8ada7bdacb19da759"><td class="mdescLeft">&#160;</td><td class="mdescRight">private variable of the dout-pin of the first ADC <br /></td></tr>
+<tr class="separator:ac1c2e170ddaab5a8ada7bdacb19da759"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95cc066c1c340fcf58ef1ab8d97ed1ac"><td class="memItemLeft" align="right" valign="top"><a id="a95cc066c1c340fcf58ef1ab8d97ed1ac"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCS1237.html#a95cc066c1c340fcf58ef1ab8d97ed1ac">_sleep</a></td></tr>
+<tr class="memdesc:a95cc066c1c340fcf58ef1ab8d97ed1ac"><td class="mdescLeft">&#160;</td><td class="mdescRight">private variabel of the sleep state of the chip <br /></td></tr>
+<tr class="separator:a95cc066c1c340fcf58ef1ab8d97ed1ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab624e6a5086b83b5041ab19647d29644"><td class="memItemLeft" align="right" valign="top"><a id="ab624e6a5086b83b5041ab19647d29644"></a>
+uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCS1237.html#ab624e6a5086b83b5041ab19647d29644">_object_number</a></td></tr>
+<tr class="memdesc:ab624e6a5086b83b5041ab19647d29644"><td class="mdescLeft">&#160;</td><td class="mdescRight">private variable to identify the object and the dedicated interrupt functions <br /></td></tr>
+<tr class="separator:ab624e6a5086b83b5041ab19647d29644"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a485b41b60a1246469c4e9f1e0d4f8f41"><td class="memItemLeft" align="right" valign="top"><a id="a485b41b60a1246469c4e9f1e0d4f8f41"></a>
+volatile bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCS1237.html#a485b41b60a1246469c4e9f1e0d4f8f41">_block_value</a></td></tr>
+<tr class="memdesc:a485b41b60a1246469c4e9f1e0d4f8f41"><td class="mdescLeft">&#160;</td><td class="mdescRight">private variable to know, when a data_transfer is running <br /></td></tr>
+<tr class="separator:a485b41b60a1246469c4e9f1e0d4f8f41"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84f446b82d6bf8709849d8284bc58850"><td class="memItemLeft" align="right" valign="top"><a id="a84f446b82d6bf8709849d8284bc58850"></a>
+volatile uint8_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCS1237.html#a84f446b82d6bf8709849d8284bc58850">_clock_count</a></td></tr>
+<tr class="memdesc:a84f446b82d6bf8709849d8284bc58850"><td class="mdescLeft">&#160;</td><td class="mdescRight">private variable to count the clocks, which ara send to the ADC <br /></td></tr>
+<tr class="separator:a84f446b82d6bf8709849d8284bc58850"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad66c7560146a960688b0fa8ded715e79"><td class="memItemLeft" align="right" valign="top"><a id="ad66c7560146a960688b0fa8ded715e79"></a>
+volatile int32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCS1237.html#ad66c7560146a960688b0fa8ded715e79">_value</a></td></tr>
+<tr class="memdesc:ad66c7560146a960688b0fa8ded715e79"><td class="mdescLeft">&#160;</td><td class="mdescRight">private variable for the measured value of the analog signal <br /></td></tr>
+<tr class="separator:ad66c7560146a960688b0fa8ded715e79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab95c385749283e8cbe43b75c6383671b"><td class="memItemLeft" align="right" valign="top"><a id="ab95c385749283e8cbe43b75c6383671b"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCS1237.html#ab95c385749283e8cbe43b75c6383671b">_interrupt_reading</a> = false</td></tr>
+<tr class="memdesc:ab95c385749283e8cbe43b75c6383671b"><td class="mdescLeft">&#160;</td><td class="mdescRight">private flag to know, if there is an interrupt reading in process or not <br /></td></tr>
+<tr class="separator:ab95c385749283e8cbe43b75c6383671b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p><a class="el" href="classCS1237.html" title="CS1237 class     The class is intended to configure and read the values of the ADC,...">CS1237</a> class <br  />

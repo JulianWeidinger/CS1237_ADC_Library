@@ -166,6 +166,33 @@ static void IRAM\+\_\+\+ATTR \mbox{\hyperlink{classCS1237_a928167e012ae09f25492c
 \mbox{\Hypertarget{classCS1237_ada6256dd58f151100cdf99611a9129e2}\label{classCS1237_ada6256dd58f151100cdf99611a9129e2}} 
 int32\+\_\+t \mbox{\hyperlink{classCS1237_ada6256dd58f151100cdf99611a9129e2}{\+\_\+offset}} = 0
 \begin{DoxyCompactList}\small\item\em public variable for the offset of the measured analog signal \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsection*{Private Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{classCS1237_a1dab738f308f36197d96651d13fbf56a}\label{classCS1237_a1dab738f308f36197d96651d13fbf56a}} 
+uint8\+\_\+t \mbox{\hyperlink{classCS1237_a1dab738f308f36197d96651d13fbf56a}{\+\_\+sck}}
+\begin{DoxyCompactList}\small\item\em private variable of the clock-\/pin \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_ac1c2e170ddaab5a8ada7bdacb19da759}\label{classCS1237_ac1c2e170ddaab5a8ada7bdacb19da759}} 
+uint8\+\_\+t \mbox{\hyperlink{classCS1237_ac1c2e170ddaab5a8ada7bdacb19da759}{\+\_\+dout}}
+\begin{DoxyCompactList}\small\item\em private variable of the dout-\/pin of the first ADC \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_a95cc066c1c340fcf58ef1ab8d97ed1ac}\label{classCS1237_a95cc066c1c340fcf58ef1ab8d97ed1ac}} 
+uint8\+\_\+t \mbox{\hyperlink{classCS1237_a95cc066c1c340fcf58ef1ab8d97ed1ac}{\+\_\+sleep}}
+\begin{DoxyCompactList}\small\item\em private variabel of the sleep state of the chip \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_ab624e6a5086b83b5041ab19647d29644}\label{classCS1237_ab624e6a5086b83b5041ab19647d29644}} 
+uint8\+\_\+t \mbox{\hyperlink{classCS1237_ab624e6a5086b83b5041ab19647d29644}{\+\_\+object\+\_\+number}}
+\begin{DoxyCompactList}\small\item\em private variable to identify the object and the dedicated interrupt functions \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_a485b41b60a1246469c4e9f1e0d4f8f41}\label{classCS1237_a485b41b60a1246469c4e9f1e0d4f8f41}} 
+volatile bool \mbox{\hyperlink{classCS1237_a485b41b60a1246469c4e9f1e0d4f8f41}{\+\_\+block\+\_\+value}}
+\begin{DoxyCompactList}\small\item\em private variable to know, when a data\+\_\+transfer is running \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_a84f446b82d6bf8709849d8284bc58850}\label{classCS1237_a84f446b82d6bf8709849d8284bc58850}} 
+volatile uint8\+\_\+t \mbox{\hyperlink{classCS1237_a84f446b82d6bf8709849d8284bc58850}{\+\_\+clock\+\_\+count}}
+\begin{DoxyCompactList}\small\item\em private variable to count the clocks, which ara send to the ADC \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_ad66c7560146a960688b0fa8ded715e79}\label{classCS1237_ad66c7560146a960688b0fa8ded715e79}} 
+volatile int32\+\_\+t \mbox{\hyperlink{classCS1237_ad66c7560146a960688b0fa8ded715e79}{\+\_\+value}}
+\begin{DoxyCompactList}\small\item\em private variable for the measured value of the analog signal \end{DoxyCompactList}\item 
+\mbox{\Hypertarget{classCS1237_ab95c385749283e8cbe43b75c6383671b}\label{classCS1237_ab95c385749283e8cbe43b75c6383671b}} 
+bool \mbox{\hyperlink{classCS1237_ab95c385749283e8cbe43b75c6383671b}{\+\_\+interrupt\+\_\+reading}} = false
+\begin{DoxyCompactList}\small\item\em private flag to know, if there is an interrupt reading in process or not \end{DoxyCompactList}\end{DoxyCompactItemize}
 
 
 \doxysubsection{Detailed Description}
