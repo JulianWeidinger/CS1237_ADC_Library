@@ -1,0 +1,45 @@
+\hypertarget{index_intro_sec}{}\doxysection{Introduction}\label{index_intro_sec}
+As part of my bachelor thesis, I developed a device to measure the hardness differences in the snowpack. This can be attached to a ski touring probe. To take a measurement, the probe is inserted into the snow. The result is a hardness profile of the snowpack over the depth. The hardness measurement was carried out with the help of two load cells, two instrument amplifiers and two AD converters integrated in the microcontroller. Errors occurred because $\ast$ the analog cables of the load cells were probably picking up electromagnetic interference. For this reason I selected an AD converter chip (\mbox{\hyperlink{classCS1237}{CS1237}}) with an integrated amplifier and created a circuit board. The translated datasheet can be found \href{https://github.com/rafaellcoellho/cs1237-datasheet/blob/master/cs1237_datasheet.pdf}{\texttt{ here}}. Every interface and timing information of the CS1237-\/\+Chip is taken out of this datasheet and isn\textquotesingle{}t extra cited. The standard ADC-\/coverter (HX711) has a too slow sample rate, to use in my measurement device and the chips from other manufacturers ware too expensive. I wrote the following Arduino library as part of a study project \char`\"{}data communication\char`\"{} to create the digital interface between the ADC chip and the ESP32-\/microcontroller. breakoutboard for the ADC-\/chip was developed by myself, because I couldn\textquotesingle{}t find a breakout to buy. In the following pictures you can see circuit diagram, the front and back schematic and a 3D-\/model of the breakoutboard\+:       images of the circuit diagram, the front and back schematic and a 3D-\/model of the breakoutboard\hypertarget{index_describtion}{}\doxysection{Theme of the project}\label{index_describtion}
+The aim of the work is, to write a library, to configure the ADC and get the measured analog signal. The best solution would be an interrupt driven library, where you can connect two ADCs to the MCU and read it parralell in the background. Another nice feature would be to connect multiple ADCs to one clock line and read the ADCs synchronous.\hypertarget{index_description_ADC}{}\doxysection{Description of the ADC (\+CS1237)}\label{index_description_ADC}
+The gain (1,2,64,128), the sample rate(10\+Hz,40\+Hz,640\+Hz,1280\+Hz), the reference voltage (internal, or external) and the channel(external diferential signal, temperature sensor) of the ADC can be independent configured. The interface of the ADC chip has a unidirectional clock line “\+CLK” and a bidirectional data line \char`\"{}\+DOUT/\+DIN\char`\"{}. The clock-\/ line is used for the clock signal and for switching the chip on and off (sleep mode). The data line is used on the one hand to transmit the AD measurement and on the other hand to configure the chip. In addition, an interrupt signal is outputted via the data line for 26,13 us, if a new measurement is available, depending on the configured measurement frequency. The interrupt of the ADC is also outputed during digital data transmission. It must therefore be ensured, that the data transmission is completed at this point, otherwise the result will be incorrect. In the following image a oscilloscope capture of the finished library and three datatransmission processes with the interrupts of the ADC chip can be seen\+:
+
+ Diagramm of an oscilloscope measurement while a data transmission process\hypertarget{index_description_library}{}\doxysection{Description of the setup, the code and the attemps to get it working}\label{index_description_library}
+The library is written in Visual Studio Code in C++. For flashing the ESP32 the Arduino extension from Microsoft was used.
+
+My first idea was to connect several chips to one clock line in order to save GPIOs. Unfortunately, after several attempts, this was impossible because the internal clock of the chips are not synchronized and the output interrupt occurrs at different times. This is particularly critical with the desired output frequency of 1280 Hz. That\textquotesingle{}s why I decided to write a C ++ library, in which several instances with different clock lines can be created. The number of ADCs to connect to one MCU is limited to two. The reason is, that the timing is critical especially, when the sample rate is set to 1280. The library could be written to allow more than two instances running in parallel, if the high sample rates are blocked, but that is a future work.
+
+This current library is written with hardware and timer interrupt service routines, so it can run in the background, while the main code is running. And the last measured analog value, which is updated in the background, can be called up anytime. In the next picture you can see a screenshot of the Arduino-\/\+Serial-\/\+Plotter, while the example code runs on the ESP32 with two ADCs. There is some noise in the signal. This is probably due to the long unshielded cables or due to the PCB layout. The signal is periodic so, in a future work it could be filtered with fourier transformation\+: The setup can be seen in the next picture. For the differential analog signal were two 10kg loadcells used one is screwed in the negativ and the other in the positive direction to show, that the ADC-\/library woks in both directions\+:
+
+ ~\newline
+ A screenshot of the serial plotter, while the example code runs on the ESP32 with two ADCs
+
+ A schematic sketch to show the test setup     fotos of the test setup with the two scales, the loadcells, the ADCs and the Node\+MCU
+
+The next picture shows the block diagram of the example code. The detailed describtions and graphs of the class functions are showed on the class page.  block diagram of the example code\hypertarget{index_dependencies}{}\doxysection{Dependencies}\label{index_dependencies}
+This library was only tested on the ESP32 DEV\+\_\+\+KIT\+\_\+\+V4
+
+
+\begin{DoxyItemize}
+\item At this time it is only allowed to connect two ADCs with one clock and one data line each.
+\item you could use nearly any GPIO for the clock lines and any GPIO with an interrupt function for the Data line.
+\item to the ADC were two 10kg loadcells connected.
+\end{DoxyItemize}\hypertarget{index_author}{}\doxysection{Author}\label{index_author}
+Written by Julian Weidinger (matriculation-\/number \+: 11259117) for an university Project at the University of applied science.
+
+The source code and one example is available on \href{https://github.com/JulianWeidinger/CS1237_ADC_Library}{\texttt{ my github page}}
+
+The code is written with doxygen comments to create a html documentation of the library. The style is from the doxygen \href{https://learn.adafruit.com/the-well-automated-arduino-library/doxygen-tips}{\texttt{ manuel from Ardafruit}}\hypertarget{index_sources}{}\doxysection{Sources}\label{index_sources}
+
+\begin{DoxyEnumerate}
+\item datasheet\+: \href{https://github.com/rafaellcoellho/cs1237-datasheet/blob/master/cs1237_datasheet.pdf}{\texttt{ https\+://github.\+com/rafaellcoellho/cs1237-\/datasheet/blob/master/cs1237\+\_\+datasheet.\+pdf}}
+\item external hardware interrupt\+: \href{https://techtutorialsx.com/2017/09/30/esp32-arduino-external-interrupts/}{\texttt{ https\+://techtutorialsx.\+com/2017/09/30/esp32-\/arduino-\/external-\/interrupts/}}
+\item timer interrupts\+: \href{https://techtutorialsx.com/2017/10/07/esp32-arduino-timer-interrupts/}{\texttt{ https\+://techtutorialsx.\+com/2017/10/07/esp32-\/arduino-\/timer-\/interrupts/}}
+\item attach interrupts to class instances\+: \href{https://arduinoplusplus.wordpress.com/2021/02/05/interrupts-and-c-class-instances/}{\texttt{ https\+://arduinoplusplus.\+wordpress.\+com/2021/02/05/interrupts-\/and-\/c-\/class-\/instances/}}
+\item doxygen documentation guide\+: \href{https://learn.adafruit.com/the-well-automated-arduino-library/doxygen-tips}{\texttt{ https\+://learn.\+adafruit.\+com/the-\/well-\/automated-\/arduino-\/library/doxygen-\/tips}}
+\end{DoxyEnumerate}
+
+\begin{DoxyDate}{Date}
+09.\+01.\+2022 ~\newline
+ ~\newline
+
+\end{DoxyDate}
