@@ -55,25 +55,27 @@ class CS1237
 {
 private:
     // variables for ADC configuration
-    //! @param _sck private variable of the clock-pin
+
+    //! private variable of the clock-pin
     uint8_t _sck;
-    //! @param _dout private variable of the dout-pin of the first ADC
+    //! private variable of the dout-pin of the first ADC
     uint8_t _dout;
-    //! @param _sleep private variabel of the sleep state of the chip
+    //! private variabel of the sleep state of the chip
     uint8_t _sleep;
 
     // variables for the object definition
-    //! @param _object_number private variable to identify the object and the dedicated interrupt functions
+    //! private variable to identify the object and the dedicated interrupt functions
     uint8_t _object_number;
 
     // variables for the data transfer process and interrupts //https://arduinoplusplus.wordpress.com/2021/02/05/interrupts-and-c-class-instances/
-    //! @param _block_value private variable to know, when a data_transfer is running
+    
+    //! private variable to know, when a data_transfer is running
     volatile bool _block_value;
-    //! @param _clock_count private variable to count the clocks, which ara send to the ADC
+    //! private variable to count the clocks, which ara send to the ADC
     volatile uint8_t _clock_count;
-    //! @param _vlaue private variable for the measured value of the analog signal
+    //! private variable for the measured value of the analog signal
     volatile int32_t _value;
-    //! @param _interrupt_reading private flag to know, if there is an interrupt reading in process or not
+    //! private flag to know, if there is an interrupt reading in process or not
     bool _interrupt_reading = false;
 
 public:
